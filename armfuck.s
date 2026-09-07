@@ -43,9 +43,24 @@ _loop:	// main loop
 bf_pointr:
 	// '>'
 	add	x4, x4, #1
+	// memory safety
+	ldr	x1, =bfstack_aft
+	cmp	x4, x1
+	// if the response is safely in bounds, continue
+	B.lo	_cont
+	// if not, jump to the first element in the start
+	ldr	x4, =bfstack
 	B	_cont
 bf_pointl:
 	// '<'
+	sub	x4, x4, #1
+	// memory safety
+	ldr	x1, =bfstack
+	cmp	x4, x1
+	// if the response is safely in bounds, continue
+	B.hs	_cont
+	// if not, jump to the last element in the stack
+	ldr	x4, =bfstack_aft
 	sub	x4, x4, #1
 	B	_cont
 bf_add:
@@ -112,7 +127,7 @@ _brackr_loop:
 	cmp	x7, #0
 	B.le	_brackr_cont
 	cmp	x3, x1
-	B.le	_brackr_cont
+	B.ls	_brackr_cont
 
 	ldrb	w5, [x3, #-1]!
 
@@ -144,4 +159,5 @@ bfstr: .asciz "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++.
 //bfstr: .asciz "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++." // prints W
 //bfstr: .asciz "++[+-++]"
 bfstack: .fill 255, 1, 0
+bfstack_aft:
 scratchstr: .fill 1, 1, 0
