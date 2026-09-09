@@ -152,7 +152,8 @@ _cont:
 
 _exit:
 	// tell Linux to exit
-	mov 	x8, #93 // exit routine
+	mov	x0, #0	// normal exit code
+	mov 	x8, #93	// exit routine
 	svc 	#0
 .data
 bfstr: .asciz "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
