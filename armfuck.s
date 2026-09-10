@@ -155,6 +155,32 @@ _exit:
 	mov	x0, #0	// normal exit code
 	mov 	x8, #93	// exit routine
 	svc 	#0
+
+
+// unexecuted atm, to be activated later
+gen_depth:
+	ldr	x3, =bfstr
+	mov	x0, sp
+
+_gen_depth_loop:
+	ldrb	w5, [x3], #1
+
+	cmp	w5, #'['
+	B.eq	_gen_depth
+	B	_gen_depth_cont // break off to ensure no fallthrough
+
+_gen_depth:
+	str	x3, [sp, #-16]!
+	B	_gen_depth_cont
+
+_gen_depth_cont:
+	// if no null terminator reached, loop
+	cmp	w5, #0
+	B.ne	_gen_depth_loop
+
+	ret
+
+
 .data
 bfstr: .asciz "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
 //bfstr: .asciz "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++." // prints W
